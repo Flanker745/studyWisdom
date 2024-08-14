@@ -1,0 +1,433 @@
+import React, { useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../components/UserContext";
+
+function AddTeacher() {
+  const { id, user, existUser, setExistUser, exitUserId, api } =
+    useContext(UserContext);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (id !== "undefined") {
+      checkCredentials();
+    } else {
+      navigate("/login");
+    }
+  }, [user]);
+
+  function checkCredentials() {
+    if (user) {
+      if (user.role !== "teacher") {
+        navigate("/");
+      }
+    }
+  }
+  if (existUser) {
+    window.location.href = `teacher/${exitUserId}`;
+  }
+
+  const [logo, setLogo] = useState();
+  const [classType, setClassType] = useState("");
+  const [classLanguage, setClassLanguage] = useState("");
+  const [formdata, setFormdata] = useState({
+    user: "",
+    name: "",
+    logo: "",
+    about: "",
+    language: "",
+    regionalLanguage: "",
+    address: "",
+    city: "",
+    state: "",
+    classFrom: "",
+    classTo: "",
+    subject: "",
+    type: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!formdata.name) newErrors.name = "Name is required.";
+    if (!formdata.logo) newErrors.logo = "Logo is required.";
+    if (!formdata.type) newErrors.type = "Type is required.";
+    if (!formdata.about) newErrors.about = "About us is required.";
+    if (!formdata.language) newErrors.language = "Language is required.";
+    if (classLanguage == "regional") {
+      if (!formdata.regionalLanguage)
+        newErrors.regionalLanguage = "Regional Language is required.";
+    }
+    if (classType == "offline") {
+      if (!formdata.address) newErrors.address = "Address is required.";
+      if (!formdata.city) newErrors.city = "City is required.";
+      if (!formdata.state) newErrors.state = "State is required.";
+    }
+    if (!formdata.subject) newErrors.subject = "Subject us is required.";
+
+    return newErrors;
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    const newErrors = validateForm();
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+    const form = e.target;
+    const formData = new FormData(form);
+    try {
+      let response = await fetch(`${api}/addteacher`, {
+        method: "POST",
+
+        body: formData,
+      });
+      response = await response.json();
+      if (response) {
+        form.reset();
+        setExistUser(true);
+        navigate(`/teacher/${response.response._id}`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleLogoChange = (e) => {
+    let file = e.target.files[0];
+    if (!file.name.match(/\.(jpg|jpeg|png)$/)) {
+      alert("Please upload a valid image file (jpg, jpeg, png).");
+      e.target.value = ""; // Reset the file input
+      return;
+    }
+    let abc = window.URL.createObjectURL(file);
+    setLogo(abc);
+    setFormdata({ ...formdata, logo: file });
+  };
+
+  const subjects = [
+    "Physics",
+    "Chemistry",
+    "Maths",
+    "Biology",
+    "Economics",
+    "History",
+    "Political Science",
+    "Geography",
+    "Sociology",
+    "Philosophy",
+    "Psychology",
+    "Computer Science",
+    "Accountancy",
+    "Business Studies",
+    "Economics",
+    "Hindi",
+    "English",
+  ];
+  return (
+    <>
+      <div className="m-auto w-full lg:w-3/4 border-2 my-6 p-6 rounded-lg">
+        <form onSubmit={handleFormSubmit} className="space-y-5">
+          <input type="hidden" name="user" value={id} />
+          <h5 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-center">
+            Add Teacher
+          </h5>
+          <div>
+            <input
+              type="text"
+              className="w-full border rounded bg-neutral-50 py-2 px-3 text-base md:text-lg focus:outline-none"
+              placeholder="Name"
+              name="name"
+              value={formdata.name}
+              onChange={(e) => {
+                setFormdata({ ...formdata, name: e.target.value });
+              }}
+            />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name}</p>
+            )}
+          </div>
+          <div className="flex flex-col md:flex-row border rounded bg-neutral-50 py-2 px-3 gap-4">
+            <input
+              onChange={handleLogoChange}
+              className="w-full"
+              type="file"
+              name="logo"
+            />
+            <div className="w-full md:w-[250px] h-[200px] rounded-lg overflow-hidden border">
+              <img className="w-full h-full object-cover" src={logo} alt="" />
+            </div>
+          </div>
+          {errors.logo && <p className="text-red-500 text-sm">{errors.logo}</p>}
+          <div className="space-y-5">
+            <div>
+              <input
+                type="text"
+                className="w-full border rounded bg-neutral-50 py-2 px-3 text-base md:text-lg focus:outline-none"
+                placeholder="About You"
+                name="about"
+                value={formdata.about}
+                onChange={(e) => {
+                  setFormdata({ ...formdata, about: e.target.value });
+                }}
+              />
+              {errors.about && (
+                <p className="text-red-500 text-sm">{errors.about}</p>
+              )}
+            </div>
+            <h4 className="text-2xl">Language</h4>
+            <div className="flex px-2 mt-3 gap-8">
+              <div>
+                <label htmlFor="hindi">Hindi</label>
+                <input
+                  value={formdata.language}
+                  onChange={() => {
+                    setClassLanguage("hindi");
+                    setFormdata({ ...formdata, language: "hindi" });
+                  }}
+                  id="hindi"
+                  className="ms-3"
+                  name="language"
+                  type="radio"
+                />
+              </div>
+              <div>
+                <label htmlFor="english">English</label>
+                <input
+                  value={formdata.language}
+                  onChange={() => {
+                    setClassLanguage("english");
+                    setFormdata({ ...formdata, language: "english" });
+                  }}
+                  id="english"
+                  className="ms-3"
+                  name="language"
+                  type="radio"
+                />
+              </div>
+              <div>
+                <label htmlFor="regional">Regional</label>
+                <input
+                  value={formdata.language}
+                  onChange={() => {
+                    setClassLanguage("regional");
+                    setFormdata({ ...formdata, language: "regional" });
+                  }}
+                  id="regional"
+                  className="ms-3"
+                  name="language"
+                  type="radio"
+                />
+              </div>
+              {errors.language && (
+                <p className="text-red-500 text-sm">{errors.language}</p>
+              )}
+            </div>
+            {classLanguage === "regional" && (
+              <div>
+                <input
+                  type="text"
+                  className="w-full border rounded bg-neutral-50 py-2 px-3 text-base md:text-lg focus:outline-none"
+                  placeholder="Other language"
+                  name="regionalLanguage"
+                  value={formdata.regionalLanguage}
+                  onChange={(e) => {
+                    setFormdata({
+                      ...formdata,
+                      regionalLanguage: e.target.value,
+                    });
+                  }}
+                />
+                {errors.regionalLanguage && (
+                  <p className="text-red-500 text-sm">
+                    {errors.regionalLanguage}
+                  </p>
+                )}
+              </div>
+            )}
+            <h4 className="text-2xl">Type</h4>
+            <div className="flex px-2 mt-3 gap-8">
+              <div>
+                <label htmlFor="online">Online</label>
+                <input
+                  value={formdata.type}
+                  onChange={() => {
+                    setClassType("online");
+                    setFormdata({
+                      ...formdata,
+                      type: "online",
+                    });
+                  }}
+                  id="online"
+                  className="ms-3"
+                  name="type"
+                  type="radio"
+                />
+              </div>
+              <div>
+                <label htmlFor="Offline">Offline</label>
+                <input
+                  value={formdata.type}
+                  onChange={() => {
+                    setClassType("offline");
+                    setFormdata({
+                      ...formdata,
+                      type: "offline",
+                    });
+                  }}
+                  id="Offline"
+                  className="ms-3"
+                  name="type"
+                  type="radio"
+                />
+              </div>
+              <div>
+                <label htmlFor="both">Online & Offline</label>
+                <input
+                  value={formdata.type}
+                  onChange={() => {
+                    setClassType("offline");
+                    setFormdata({
+                      ...formdata,
+                      type: "online && Offline",
+                    });
+                  }}
+                  id="both"
+                  className="ms-3"
+                  name="type"
+                  type="radio"
+                />
+              </div>
+              {errors.type && (
+                <p className="text-red-500 text-sm">{errors.type}</p>
+              )}
+            </div>
+          </div>
+
+          {classType == "offline" ? (
+            <div className="space-y-5">
+              <div>
+                <input
+                  type="text"
+                  className="w-full border rounded bg-neutral-50 py-2 px-3 text-base md:text-lg focus:outline-none"
+                  placeholder="Address"
+                  name="address"
+                  value={formdata.address}
+                  onChange={(e) => {
+                    setFormdata({ ...formdata, address: e.target.value });
+                  }}
+                />
+                {errors.address && (
+                  <p className="text-red-500 text-sm">{errors.address}</p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  className="w-full border rounded bg-neutral-50 py-2 px-3 text-base md:text-lg focus:outline-none"
+                  placeholder="City"
+                  name="city"
+                  value={formdata.city}
+                  onChange={(e) => {
+                    setFormdata({ ...formdata, city: e.target.value });
+                  }}
+                />
+                {errors.city && (
+                  <p className="text-red-500 text-sm">{errors.city}</p>
+                )}
+              </div>
+              <div>
+                <input
+                  type="text"
+                  className="w-full border rounded bg-neutral-50 py-2 px-3 text-base md:text-lg focus:outline-none"
+                  placeholder="State"
+                  name="state"
+                  value={formdata.state}
+                  onChange={(e) => {
+                    setFormdata({ ...formdata, state: e.target.value });
+                  }}
+                />
+                {errors.state && (
+                  <p className="text-red-500 text-sm">{errors.state}</p>
+                )}
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
+          <div>
+            <div className="flex flex-col md:flex-row gap-4">
+              <select
+                className="w-full md:w-[15%] border rounded bg-neutral-50 mt-2 p-2 text-base md:text-lg focus:outline-none"
+                name="classFrom"
+                value={formdata.classFrom}
+                onChange={(e) => {
+                  setFormdata({ ...formdata, classFrom: e.target.value });
+                }}
+              >
+                <option value="">Class From</option>
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+              {errors.classFrom && (
+                <p className="text-red-500 text-sm">{errors.classFrom}</p>
+              )}
+              <select
+                className="w-full md:w-[15%] border rounded bg-neutral-50 mt-2 p-2 text-base md:text-lg focus:outline-none"
+                name="classTo"
+                value={formdata.classTo}
+                onChange={(e) => {
+                  setFormdata({ ...formdata, classTo: e.target.value });
+                }}
+              >
+                <option value="">Class To</option>
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                  <option key={num} value={num}>
+                    {num}
+                  </option>
+                ))}
+              </select>
+              {errors.classTo && (
+                <p className="text-red-500 text-sm">{errors.classTo}</p>
+              )}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="block text-xl md:text-2xl font-semibold">
+              Class 11th , 12th
+            </label>
+            <div className="flex flex-wrap gap-4">
+              {subjects.map((subject) => (
+                <div key={subject}>
+                  <label htmlFor={subject}>{subject}</label>
+                  <input
+                    value={formdata.subject}
+                    onChange={() => setFormdata({ ...formdata, subject })}
+                    id={subject}
+                    className="ms-3"
+                    name="subject"
+                    type="radio"
+                  />
+                </div>
+              ))}
+            </div>
+            {errors.subject && (
+              <p className="text-red-500 text-sm">{errors.subject}</p>
+            )}
+          </div>
+          <div className="text-end">
+            <button className="px-6 py-2 text-lg md:text-2xl rounded-lg font-semibold bg-blue-500 text-white">
+              Add
+            </button>
+          </div>
+        </form>
+      </div>
+    </>
+  );
+}
+
+export default AddTeacher;
