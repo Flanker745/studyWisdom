@@ -112,19 +112,6 @@ function Coching() {
                 </div>
               </div>
               <div className=" gap-4 mt-4  flex-wrap items-center justify-end  sm:justify-between">
-                <div className="bg-purple-400 w-full  sm:w-fit flex overflow-hidden text-white items-center  rounded-md">
-                  <div className="px-3 sm:px-6 bg-purple-300 py-2">
-                    <img
-                      className="min-w-[60px]"
-                      src="https://static.collegedekho.com/static-up/images/college_listing/studentshortlist.abdd76537ce1.svg"
-                      loading="lazy"
-                      alt=""
-                    />
-                  </div>
-                  <p className="px-3 sm:px-6">
-                    Favourite of {cochingData.fav}+ students
-                  </p>
-                </div>
                 <div className=" flex gap-5 mt-9">
                   <button className="bg-blue-500 w-fit px-2 lg:px-5 py-2 rounded-md text-sm sm:text-lg text-white">
                     Book a Demo Class
