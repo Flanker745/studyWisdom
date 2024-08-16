@@ -115,7 +115,7 @@ function Header() {
                 <Link to="/">Home</Link>
               </li>
               <li className="hover:underline">
-                <Link to="#">About Us</Link>
+                <Link to="#">About You</Link>
               </li>
               {role === "user" ||
                 (role === "student" && (
