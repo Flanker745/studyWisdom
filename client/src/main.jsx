@@ -40,8 +40,8 @@ const StudentResults = lazy(() => import("./students/StudentResults"));
 const AddVideos = lazy(() => import("./dashboard/videos/AddVideos"));
 const ViewVideos = lazy(() => import("./dashboard/videos/ViewVideos"));
 const StudentVideos = lazy(() => import("./students/StudentVideos"));
-
-const StudendViewVideo = lazy(()=> import ("./students/ViewVideo"));
+const ForgetPassword = lazy(() => import("./pages/Login/ForgetPass"));
+const StudendViewVideo = lazy(() => import("./students/ViewVideo"));
 
 const router = createBrowserRouter([
   {
@@ -73,6 +73,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "forgetPass",
+        element: <ForgetPassword />,
       },
       {
         path: "coching/:id",

@@ -124,6 +124,11 @@ function Login() {
             </button>
           </div>
         </form>
+        <p className="mt-6 ">
+          <Link to="/forgetPass" className="text-blue-600">
+            Forget Passowrd !
+          </Link>
+        </p>
         <p className="mt-6 text-center">
           Don't have an account?{" "}
           <Link to="/signup" className="text-blue-600">

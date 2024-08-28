@@ -6,7 +6,7 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [sidebarToggle, setSidebarToggle] = useState(false);
-  const api = "https://serverapi.studywisdom.com";
+  const api = "http://localhost:5500";
   const [existUser, setExistUser] = useState(null);
   const [exitUserId, setExitUserId] = useState(null);
   const [exitUserDetails, setExitUserDetails] = useState([]);

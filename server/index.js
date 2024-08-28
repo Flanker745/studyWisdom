@@ -174,7 +174,6 @@ app.post("/getOTP", async (req, res) => {
     subject: "OTP for login",
     text: "Your OTP is " + otp,
   };
-  console.log(otp);
   transporter.sendMail(option, (err, info) => {
     if (err) return res.status(202).json({ msg: err, status: false });
     res.status(200).json({ msg: info, status: true });
@@ -195,7 +194,7 @@ app.post("/registerUser", async (req, res) => {
     role,
   } = req.body;
   try {
-    const existingUser = await User.findOne({email : email });
+    const existingUser = await User.findOne({ email: email });
 
     if (existingUser) {
       return res.json({ msg: "User already exist", status: false });
@@ -306,13 +305,14 @@ app.post("/addCoching", upload, async (req, res) => {
     res.json({ msg: err, status: false });
   }
 });
-app.get("/",async(req,res)=>{
+app.get("/", async (req, res) => {
+  const existingUser = await User.findOne({
+    email: "onestopshop3322@gmail.com",
+  });
+  console.log(existingUser);
 
-  const existingUser = await User.findOne({email : "onestopshop3322@gmail.com" });
-  console.log(existingUser)
-
-  res.send("")
-})
+  res.send("");
+});
 //view cochings'
 
 app.get("/viewCochings", async (req, res) => {
@@ -753,10 +753,9 @@ app.get("/viewResults/:id", async (req, res) => {
   }
 });
 
-
 app.post("/addvideos", verifyJWT, fileUplodes.none(), async (req, res) => {
-
-  const { coaching_id, video_name, video_link ,  classes, streams, subject } = req.body;
+  const { coaching_id, video_name, video_link, classes, streams, subject } =
+    req.body;
   try {
     const response = await Videos.create({
       coaching_id,
@@ -779,20 +778,17 @@ app.get("/viewVideos/:id", async (req, res) => {
   const skip = (page - 1) * limit;
 
   try {
-
     let videos = await Videos.find({
       coaching_id: new mongoose.Types.ObjectId(id),
     })
       .skip(skip)
       .limit(limit);
 
-    res.json({ videos: videos , status: true });
+    res.json({ videos: videos, status: true });
   } catch (err) {
     res.json({ msg: err, status: false });
   }
 });
-
-
 
 app.get("/dashboard/:id", async (req, res) => {
   const { id } = req.params;
@@ -815,7 +811,7 @@ app.get("/dashboard/:id", async (req, res) => {
     coaching_id: new mongoose.Types.ObjectId(id),
   });
 
-  res.json({ student, notes, modules, dpps, results, video ,  status: true });
+  res.json({ student, notes, modules, dpps, results, video, status: true });
 });
 
 app.post("/Notes", async (req, res) => {
@@ -898,8 +894,6 @@ app.post("/Results", async (req, res) => {
   }
 });
 
-
-
 app.post("/Videos", async (req, res) => {
   const { coaching_id, classes } = req.body;
   try {
@@ -935,8 +929,8 @@ app.post("/update-status", async (req, res) => {
       model = Notes;
       break;
     case "Videos":
-    model = Videos;
-    break;
+      model = Videos;
+      break;
     default:
       return res.status(400).json({ msg: "Invalid model", status: false });
   }
@@ -1012,11 +1006,46 @@ app.post("/delet-coching-data", async (req, res) => {
     });
   }
 });
-app.post("/bookDemoClass" , async(req,res)=>{
-  const {coching_id , user_id , message} = req.body
-  console.log(coching_id , user_id , message  )
-  res.send("")
-})
+app.post("/bookDemoClass", async (req, res) => {
+  const { coching_id, user_id, message } = req.body;
+  console.log(coching_id, user_id, message);
+  res.send("");
+});
+
+app.post("/checkEmail", async (req, res) => {
+  const { email } = req.body;
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    let otp = Math.floor(1000 + Math.random() * 9000);
+    const option = {
+      from: Datas.email,
+      to: email,
+      subject: "OTP for password reset",
+      text: "Your OTP is " + otp,
+    };
+    transporter.sendMail(option, (err, info) => {
+      if (err) return res.status(202).json({ msg: err, status: false });
+      res.status(200).json({ msg: info, status: true ,  exists: true , otp:otp });
+    });
+  } else {
+    res.json({ exists: false });
+  }
+});
+
+// Change password
+app.post("/changePassword", async (req, res) => {
+  const { email, newPassword } = req.body;
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+    existingUser.password = hashedPassword;
+    await existingUser.save();
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
+});
 
 // delet-coching-data
 // Coching.updateMany({}, { $set: { status: true } })
