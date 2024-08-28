@@ -150,7 +150,9 @@ function Collage() {
             </div>
           </div>
           <div className="flex justify-around sm:justify-end gap-3 sm:gap-5 mt-9 px-2 sm:px-5 py-5 border-t">
-            <button className="bg-blue-500 px-2 sm:px-5 py-2 rounded-md text-sm sm:text-lg text-white">
+            <button onClick={()=>{
+              console.log(true)
+            }} className="bg-blue-500 px-2 sm:px-5 py-2 rounded-md text-sm sm:text-lg text-white">
               Book a Demo Class
             </button>
             <button className="border-2 border-blue-500 text-blue-500 px-2 sm:px-5 py-2 rounded-md text-sm sm:text-lg">

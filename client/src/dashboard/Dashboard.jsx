@@ -7,6 +7,7 @@ import { GoGoal } from "react-icons/go";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { UserContext } from "../components/UserContext";
+import { MdOutlineOndemandVideo } from "react-icons/md";
 
 function Dashboard() {
   const { exitUserId, api } = useContext(UserContext);
@@ -136,6 +137,28 @@ function Dashboard() {
             <div className="bg-pink-600 px-4 py-3 ">
               <Link
                 to="/dashboard/viewResults"
+                className="text-pink-100  hover:text-white   inline-block"
+              >
+                More info{" "}
+                <GrFormNextLink className="inline text-[20px] ms-4 text-pink-500 rounded-full  bg-white " />
+              </Link>
+            </div>
+          </div>
+        </div>
+        <div className="w-full sm:w-1/2 lg:w-1/4 px-3 mb-6 group">
+          <div className="bg-gray-500 overflow-hidden rounded-lg shadow-md">
+            <div className="flex items-center p-4 justify-between">
+              <div className="text-white ">
+                <h3 className="text-3xl font-bold">{count.video}</h3>
+                <p className="mt-2">Total Videos</p>
+              </div>
+              <div className="text-pink-100">
+                <MdOutlineOndemandVideo className="text-5xl group-hover:scale-110 duration-300" />
+              </div>
+            </div>
+            <div className="bg-gray-600 px-4 py-3 ">
+              <Link
+                to="/dashboard/viewVideos"
                 className="text-pink-100  hover:text-white   inline-block"
               >
                 More info{" "}

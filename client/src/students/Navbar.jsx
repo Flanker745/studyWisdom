@@ -8,6 +8,7 @@ import { VscFileSubmodule } from "react-icons/vsc";
 import { GoGoal } from "react-icons/go";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { CgWebsite } from "react-icons/cg";
+import { MdOutlineOndemandVideo } from "react-icons/md";
 
 function Navbar() {
   const { sidebarToggle, setSidebarToggle } = useContext(UserContext);
@@ -141,6 +142,22 @@ function Navbar() {
                   >
                     <IoNewspaperOutline className="text-[22px]" />
                     Result
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                      selected === "Videos" || page === "Videos"
+                        ? "bg-graydark dark:bg-meta-4"
+                        : ""
+                    }`}
+                    to={"/student/videos"}
+                    onClick={(e) => {
+                      handleMenuClick("Videos");
+                    }}
+                  >
+                    <MdOutlineOndemandVideo className="text-[22px]" />
+                    Videos
                   </Link>
                 </li>
               </ul>

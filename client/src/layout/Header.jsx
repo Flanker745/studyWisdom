@@ -7,6 +7,7 @@ import cookie from "react-cookies";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { UserContext } from "../components/UserContext";
+import { IoNotifications } from "react-icons/io5";
 
 function Header() {
   const nav = useNavigate();
@@ -93,7 +94,7 @@ function Header() {
           >
             <IoMenu />
           </div>
-          <div className=" sm:w-[55%] w-[45%] lg:w-[30%]">
+          <div className=" sm:w-[55%] w-[45%] lg:w-[28%]">
             <div className="bg-neutral-100 w-full  flex items-center justify-between pe-4 sm:pe-7 rounded">
               <input
                 placeholder="Search...."
@@ -108,14 +109,14 @@ function Header() {
           <div
             className={`${
               showNev ? "end-0" : "end-[-100%] lg:end-0"
-            } duration-300   absolute w-[80%]  md:w-[45%]  bg-neutral-200 lg:bg-inherit h-screen lg:h-fit  top-full  lg:relative`}
+            } duration-300   absolute w-[80%]  md:w-[47%]  bg-neutral-200 lg:bg-inherit h-screen lg:h-fit  top-full  lg:relative`}
           >
-            <ul className="flex flex-col gap-[60px] mt-9 lg:mt-0 lg:gap-0 lg:flex-row w-full text-[18px] items-center justify-around">
+            <ul className="flex flex-col  gap-[60px] mt-9 lg:mt-0 lg:gap-0 lg:flex-row w-full text-[18px] items-center justify-around">
               <li className="hover:underline">
                 <Link to="/">Home</Link>
               </li>
               <li className="hover:underline">
-                <Link to="#">About You</Link>
+                <Link to="#">About Us</Link>
               </li>
               {role === "user" ||
                 (role === "student" && (
@@ -180,15 +181,146 @@ function Header() {
               </li>
             </ul>
           </div>
-          <div className="w-fit lg:pe-5 flex justify-center">
+          <div className="w-fit lg:pe-5 flex items-center gap-3 justify-center">
             {user ? (
-              <div className="bg-red-500 w-fit group text-neutral-100 relative p-2 rounded-full">
-                <FaUser />
-                <div className="absolute group-hover:block  hidden  top-full -left-[80px] rounded-lg py-3 px-9 bg-red-500 ">
-                  <button>Profile</button>
-                  <button onClick={handelLogout}>Logout</button>
+              <>
+                <div className="bg-red-500 w-fit group text-neutral-100 relative p-2 rounded-full">
+                  <IoNotifications />
+                  <div className="absolute bg-gray-300 top-0 right-0 rounded-full">
+                    <div className=" p-1"></div>
+                  </div>
+                  <div className="absolute group-hover:block space-y-4 hidden sm:w-[400px] w-[320px] max-h-[450px] sm:max-h-[600px] overflow-y-scroll top-full -right-16 sm:right-[0px] rounded-lg   bg-red-500 ">
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="space-y-1 border-b-2 pb-1 rounded text-lg mx-3 my-2">
+                      <h4>from: pradeepnain745@gmail.com</h4>
+                      <div className="text-sm">
+                        message:{" "}
+                        <p className="inline ">
+                          {" "}
+                          Lorem ipsum dolor sit amet consectetur, adipisicing
+                          elit.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+                <div className="bg-red-500 w-fit group text-neutral-100 relative p-2 rounded-full">
+                  <FaUser />
+                  <div className="absolute group-hover:block  hidden  top-full -left-[80px] rounded-lg py-3 px-9 bg-red-500 ">
+                    <button>Profile</button>
+                    <button onClick={handelLogout}>Logout</button>
+                  </div>
+                </div>
+              </>
             ) : (
               <>
                 <button className="bg-blue-500  flex text-sm sm:text-xs lg:text-base text-white sm:px-3  p-2  sm:py-2 rounded">

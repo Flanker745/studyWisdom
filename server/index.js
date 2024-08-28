@@ -11,6 +11,8 @@ const Teacher = require("./Models/teacher");
 const User = require("./Models/users");
 const Notes = require("./Models/notes");
 const Results = require("./Models/result");
+const Videos = require("./Models/video");
+
 const Dpps = require("./Models/dpp");
 const Modules = require("./Models/modules");
 const cors = require("cors");
@@ -193,7 +195,7 @@ app.post("/registerUser", async (req, res) => {
     role,
   } = req.body;
   try {
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({email : email });
 
     if (existingUser) {
       return res.json({ msg: "User already exist", status: false });
@@ -304,7 +306,13 @@ app.post("/addCoching", upload, async (req, res) => {
     res.json({ msg: err, status: false });
   }
 });
+app.get("/",async(req,res)=>{
 
+  const existingUser = await User.findOne({email : "onestopshop3322@gmail.com" });
+  console.log(existingUser)
+
+  res.send("")
+})
 //view cochings'
 
 app.get("/viewCochings", async (req, res) => {
@@ -500,9 +508,14 @@ app.post("/addstudents", verifyJWT, fileUplodes.none(), async (req, res) => {
     classes,
     streams,
   } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(coaching_id)) {
+    return res.json({ msg: "Invalid coaching ID", status: false });
+  }
+
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    return res.json({ msg: "User already exist", status: false });
+    return res.json({ msg: "User already exists", status: false });
   }
 
   const saltRounds = 10;
@@ -528,7 +541,7 @@ app.post("/addstudents", verifyJWT, fileUplodes.none(), async (req, res) => {
     });
     res.json({ msg: "API called", status: true });
   } catch (err) {
-    res.json({ msg: err, status: false });
+    res.json({ msg: err.message, status: false });
   }
 });
 
@@ -740,6 +753,47 @@ app.get("/viewResults/:id", async (req, res) => {
   }
 });
 
+
+app.post("/addvideos", verifyJWT, fileUplodes.none(), async (req, res) => {
+
+  const { coaching_id, video_name, video_link ,  classes, streams, subject } = req.body;
+  try {
+    const response = await Videos.create({
+      coaching_id,
+      video_name,
+      video_link,
+      classes,
+      streams,
+      subject,
+    });
+    res.json({ msg: "API called", status: true });
+  } catch (err) {
+    res.json({ msg: err, status: false });
+  }
+});
+
+app.get("/viewVideos/:id", async (req, res) => {
+  const { id } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  try {
+
+    let videos = await Videos.find({
+      coaching_id: new mongoose.Types.ObjectId(id),
+    })
+      .skip(skip)
+      .limit(limit);
+
+    res.json({ videos: videos , status: true });
+  } catch (err) {
+    res.json({ msg: err, status: false });
+  }
+});
+
+
+
 app.get("/dashboard/:id", async (req, res) => {
   const { id } = req.params;
   const student = await Student.countDocuments({
@@ -757,8 +811,11 @@ app.get("/dashboard/:id", async (req, res) => {
   const results = await Results.countDocuments({
     coaching_id: new mongoose.Types.ObjectId(id),
   });
+  const video = await Videos.countDocuments({
+    coaching_id: new mongoose.Types.ObjectId(id),
+  });
 
-  res.json({ student, notes, modules, dpps, results, status: true });
+  res.json({ student, notes, modules, dpps, results, video ,  status: true });
 });
 
 app.post("/Notes", async (req, res) => {
@@ -840,6 +897,22 @@ app.post("/Results", async (req, res) => {
     res.json({ msg: err, status: false });
   }
 });
+
+
+
+app.post("/Videos", async (req, res) => {
+  const { coaching_id, classes } = req.body;
+  try {
+    let video = await Videos.find({
+      coaching_id: new mongoose.Types.ObjectId(coaching_id),
+      classes: classes,
+      status: true,
+    });
+    res.json({ video: video, status: true });
+  } catch (err) {
+    res.json({ msg: err, status: false });
+  }
+});
 app.post("/update-status", async (req, res) => {
   const { status, student } = req.body; // Extracting data from the request body
   let model;
@@ -861,6 +934,9 @@ app.post("/update-status", async (req, res) => {
     case "Notes":
       model = Notes;
       break;
+    case "Videos":
+    model = Videos;
+    break;
     default:
       return res.status(400).json({ msg: "Invalid model", status: false });
   }
@@ -936,6 +1012,11 @@ app.post("/delet-coching-data", async (req, res) => {
     });
   }
 });
+app.post("/bookDemoClass" , async(req,res)=>{
+  const {coching_id , user_id , message} = req.body
+  console.log(coching_id , user_id , message  )
+  res.send("")
+})
 
 // delet-coching-data
 // Coching.updateMany({}, { $set: { status: true } })

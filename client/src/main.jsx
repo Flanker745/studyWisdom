@@ -37,6 +37,11 @@ const StudentNotes = lazy(() => import("./students/StudentNotes"));
 const StudentDpp = lazy(() => import("./students/StudentDpp"));
 const StudentModules = lazy(() => import("./students/StudentModules"));
 const StudentResults = lazy(() => import("./students/StudentResults"));
+const AddVideos = lazy(() => import("./dashboard/videos/AddVideos"));
+const ViewVideos = lazy(() => import("./dashboard/videos/ViewVideos"));
+const StudentVideos = lazy(() => import("./students/StudentVideos"));
+
+const StudendViewVideo = lazy(()=> import ("./students/ViewVideo"));
 
 const router = createBrowserRouter([
   {
@@ -147,6 +152,14 @@ const router = createBrowserRouter([
         path: "/dashboard/viewResults",
         element: <ViewResults />,
       },
+      {
+        path: "/dashboard/addVideos",
+        element: <AddVideos />,
+      },
+      {
+        path: "/dashboard/viewVideos",
+        element: <ViewVideos />,
+      },
     ],
   },
   {
@@ -168,6 +181,14 @@ const router = createBrowserRouter([
       {
         path: "/student/results", // This will match "/notes/results"
         element: <StudentResults />,
+      },
+      {
+        path: "/student/videos", // This will match "/notes/results"
+        element: <StudentVideos />,
+      },
+      {
+        path: "/student/viewvideos", // This will match "/notes/results"
+        element: <StudendViewVideo />,
       },
     ],
   },

@@ -10,6 +10,7 @@ import { GoGoal } from "react-icons/go";
 import { IoNewspaperOutline } from "react-icons/io5";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { CgWebsite } from "react-icons/cg";
+import { MdOutlineOndemandVideo } from "react-icons/md";
 
 function Navbar() {
   const { sidebarToggle, setSidebarToggle } = useContext(UserContext);
@@ -373,6 +374,64 @@ function Navbar() {
                           }}
                         >
                           View Results
+                        </Link>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+                <li>
+                  <div
+                    className={`group relative flex hover:cursor-pointer items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                      selected === "video" || page === "video"
+                        ? "bg-graydark dark:bg-meta-4"
+                        : ""
+                    }`}
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleMenuClick("video");
+                    }}
+                  >
+                    <MdOutlineOndemandVideo className="text-[20px]" />
+                    Videos
+                    <IoMdArrowDropdown
+                      className={`absolute text-[30px] right-9 top-1/2 -translate-y-1/2 transition-transform ${
+                        selected === "video" ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
+                  {selected === "video" && (
+                    <ul className="pl-8 animate-fadeIn">
+                      <li>
+                        <Link
+                          onClick={() => {
+                            setPage("video");
+                            setSidebarToggle(false);
+                          }}
+                          to={"/dashboard/addVideos"}
+                          className={`group flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            page === "video"
+                              ? "bg-graydark dark:bg-meta-4"
+                              : ""
+                          }`}
+                        >
+                          Add video
+                        </Link>
+                      </li>
+                      <li>
+                        <Link
+                          className={`group flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            page === "video"
+                              ? "bg-graydark dark:bg-meta-4"
+                              : ""
+                          }`}
+                          to="/dashboard/viewVideos"
+                          onClick={() => {
+                            setPage("video");
+                            setSidebarToggle(false);
+                          }}
+                        >
+                          View Videos
                         </Link>
                       </li>
                     </ul>

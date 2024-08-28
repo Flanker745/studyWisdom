@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../components/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import cookie from "react-cookies";
@@ -9,6 +9,8 @@ function AddStudents() {
   const token = decodeURIComponent(cookie.load("token"));
   const { exitUserId, api } = useContext(UserContext);
   const [checkStreams, setcheckStreams] = useState(false);
+  const [setexitUserId , exitUserIdset] = useState(null)
+
   const [formData, setFormData] = useState({
     coaching_id: "",
     firstname: "",
@@ -22,7 +24,9 @@ function AddStudents() {
     streams: "",
     password: "",
   });
-
+// if(exitUserId){
+//   window.location.reload()
+// }
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -56,6 +60,14 @@ function AddStudents() {
     const newErrors = validate();
     if (Object.keys(newErrors).length === 0) {
       setErrors({});
+      if(formData.coaching_id=="") {
+        newErrors.email = "somethig went wrong try again"; 
+
+        setTimeout(() => {
+          return window.location.reload();
+
+        }, 1000);
+      }
       const form = e.target;
       const formd = new FormData(form);
 
@@ -71,8 +83,8 @@ function AddStudents() {
         if (response.status) {
           nav("/dashboard/viewStudent");
         } else {
-          newErrors.email = response.msg;
-          setErrors(newErrors);
+          newErrors.email = response.msg; // This should now be a string message
+    setErrors(newErrors);
         }
       } catch (err) {
         console.log(err);
@@ -81,6 +93,14 @@ function AddStudents() {
       setErrors(newErrors);
     }
   };
+  useEffect(()=>{
+    if(exitUserId){
+      setFormData({
+        ...formData,
+        coaching_id:exitUserId
+      });
+    }
+  },[exitUserId])
   return (
     <>
       <div className="max-w-2xl mx-auto mt-10 p-4">
@@ -93,7 +113,7 @@ function AddStudents() {
           <input
             type="hidden"
             name="coaching_id"
-            value={exitUserId ? exitUserId : ""}
+            value={formData.coaching_id}
           />
           {/* Name */}
           <div>
