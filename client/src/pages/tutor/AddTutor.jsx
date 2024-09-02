@@ -1,12 +1,14 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../components/UserContext";
+import { Country, State, City } from "country-state-city";
 
 function AddTutor() {
   const { id, user, existUser, setExistUser, exitUserId, api } =
     useContext(UserContext);
   const navigate = useNavigate();
-
+  const [stateApi, setStateApi] = useState(State.getStatesOfCountry("IN"));
+  const [cityApi, setCityApi] = useState([]);
   useEffect(() => {
     if (id !== "undefined") {
       checkCredentials();
@@ -166,6 +168,25 @@ function AddTutor() {
       updatedExams = updatedExams.filter((exam) => exam !== value);
     }
     setFormdata({ ...formdata, commerce: updatedExams });
+  };
+
+  const handleStateChange = (e) => {
+    const selectedState = stateApi.find(
+      (state) => state.isoCode === e.target.value
+    );
+    setFormdata({
+      ...formdata,
+      state: selectedState.name,
+      city: "", // reset city when state changes
+    });
+    setCityApi(City.getCitiesOfState("IN", selectedState.isoCode));
+  };
+
+  const handleCityChange = (e) => {
+    setFormdata({
+      ...formdata,
+      city: e.target.value,
+    });
   };
 
   return (
@@ -395,35 +416,50 @@ function AddTutor() {
                   <p className="text-red-500 text-sm">{errors.address}</p>
                 )}
               </div>
-              <div>
-                <input
-                  type="text"
-                  className="w-full border rounded bg-neutral-50 py-2 px-3 text-base md:text-lg focus:outline-none"
-                  placeholder="City"
-                  name="city"
-                  value={formdata.city}
-                  onChange={(e) => {
-                    setFormdata({ ...formdata, city: e.target.value });
-                  }}
-                />
-                {errors.city && (
-                  <p className="text-red-500 text-sm">{errors.city}</p>
-                )}
-              </div>
-              <div>
-                <input
-                  type="text"
-                  className="w-full border rounded bg-neutral-50 py-2 px-3 text-base md:text-lg focus:outline-none"
-                  placeholder="State"
-                  name="state"
-                  value={formdata.state}
-                  onChange={(e) => {
-                    setFormdata({ ...formdata, state: e.target.value });
-                  }}
-                />
-                {errors.state && (
-                  <p className="text-red-500 text-sm">{errors.state}</p>
-                )}
+              <div className="flex flex-col mt-8 md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+                <div className="w-full">
+                  <select
+                    id="state"
+                    name="state"
+                    placeholder="State / Province"
+                    onChange={handleStateChange}
+                    className={`w-full p-2 border focus:outline-none ${
+                      errors.state ? "border-red-500" : "border-gray-300"
+                    } rounded`}
+                  >
+                    <option value="">State</option>
+                    {stateApi.map((v, key) => (
+                      <option key={key} value={v.isoCode}>
+                        {v.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.state && (
+                    <p className="text-red-500 text-sm">{errors.state}</p>
+                  )}
+                </div>
+                <div className="w-full">
+                  <select
+                    id="city"
+                    name="city"
+                    placeholder="City"
+                    value={formdata.city}
+                    onChange={handleCityChange}
+                    className={`w-full p-2 border focus:outline-none ${
+                      errors.city ? "border-red-500" : "border-gray-300"
+                    } rounded`}
+                  >
+                    <option value="">City</option>
+                    {cityApi.map((v, key) => (
+                      <option key={key} value={v.name}>
+                        {v.name}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.city && (
+                    <p className="text-red-500 text-sm">{errors.city}</p>
+                  )}
+                </div>
               </div>
             </div>
           ) : (

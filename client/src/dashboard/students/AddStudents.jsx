@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../components/UserContext";
 import { Link, useNavigate } from "react-router-dom";
 import cookie from "react-cookies";
+import { Country, State, City } from "country-state-city";
 
 function AddStudents() {
   const nav = useNavigate();
@@ -9,8 +10,10 @@ function AddStudents() {
   const token = decodeURIComponent(cookie.load("token"));
   const { exitUserId, api } = useContext(UserContext);
   const [checkStreams, setcheckStreams] = useState(false);
-  const [setexitUserId , exitUserIdset] = useState(null)
+  const [setexitUserId, exitUserIdset] = useState(null);
 
+  const [stateApi, setStateApi] = useState(State.getStatesOfCountry("IN"));
+  const [cityApi, setCityApi] = useState([]);
   const [formData, setFormData] = useState({
     coaching_id: "",
     firstname: "",
@@ -24,9 +27,9 @@ function AddStudents() {
     streams: "",
     password: "",
   });
-// if(exitUserId){
-//   window.location.reload()
-// }
+  // if(exitUserId){
+  //   window.location.reload()
+  // }
   const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
@@ -60,12 +63,11 @@ function AddStudents() {
     const newErrors = validate();
     if (Object.keys(newErrors).length === 0) {
       setErrors({});
-      if(formData.coaching_id=="") {
-        newErrors.email = "somethig went wrong try again"; 
+      if (formData.coaching_id == "") {
+        newErrors.email = "somethig went wrong try again";
 
         setTimeout(() => {
           return window.location.reload();
-
         }, 1000);
       }
       const form = e.target;
@@ -84,7 +86,7 @@ function AddStudents() {
           nav("/dashboard/viewStudent");
         } else {
           newErrors.email = response.msg; // This should now be a string message
-    setErrors(newErrors);
+          setErrors(newErrors);
         }
       } catch (err) {
         console.log(err);
@@ -93,14 +95,34 @@ function AddStudents() {
       setErrors(newErrors);
     }
   };
-  useEffect(()=>{
-    if(exitUserId){
+  useEffect(() => {
+    if (exitUserId) {
       setFormData({
         ...formData,
-        coaching_id:exitUserId
+        coaching_id: exitUserId,
       });
     }
-  },[exitUserId])
+  }, [exitUserId]);
+
+  const handleStateChange = (e) => {
+    const selectedState = stateApi.find(
+      (state) => state.isoCode === e.target.value
+    );
+    setFormData({
+      ...formData,
+      state: selectedState.name,
+      city: "", // reset city when state changes
+    });
+    setCityApi(City.getCitiesOfState("IN", selectedState.isoCode));
+  };
+
+  const handleCityChange = (e) => {
+    setFormData({
+      ...formData,
+      city: e.target.value,
+    });
+  };
+
   return (
     <>
       <div className="max-w-2xl mx-auto mt-10 p-4">
@@ -195,36 +217,47 @@ function AddStudents() {
               <p className="text-red-500 text-sm">{errors.address}</p>
             )}
             <div className="flex flex-col mt-8 md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-              <div>
-                <input
+              <div className="w-full">
+                <select
+                  id="state"
+                  name="state"
+                  placeholder="State / Province"
+                  onChange={handleStateChange}
+                  className={`w-full p-2 border focus:outline-none ${
+                    errors.state ? "border-red-500" : "border-gray-300"
+                  } rounded`}
+                >
+                  <option value="">State</option>
+                  {stateApi.map((v, key) => (
+                    <option key={key} value={v.isoCode}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.state && (
+                  <p className="text-red-500 text-sm">{errors.state}</p>
+                )}
+              </div>
+              <div className="w-full">
+                <select
                   id="city"
                   name="city"
-                  type="text"
                   placeholder="City"
                   value={formData.city}
-                  onChange={handleChange}
+                  onChange={handleCityChange}
                   className={`w-full p-2 border focus:outline-none ${
                     errors.city ? "border-red-500" : "border-gray-300"
                   } rounded`}
-                />
+                >
+                  <option value="">City</option>
+                  {cityApi.map((v, key) => (
+                    <option key={key} value={v.name}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
                 {errors.city && (
                   <p className="text-red-500 text-sm">{errors.city}</p>
-                )}
-              </div>
-              <div>
-                <input
-                  id="state"
-                  name="state"
-                  type="text"
-                  placeholder="State / Province"
-                  value={formData.state}
-                  onChange={handleChange}
-                  className={`w-full p-2 border  focus:outline-none ${
-                    errors.state ? "border-red-500" : "border-gray-300"
-                  } rounded`}
-                />
-                {errors.state && (
-                  <p className="text-red-500 text-sm">{errors.state}</p>
                 )}
               </div>
             </div>

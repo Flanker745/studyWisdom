@@ -1,12 +1,13 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../components/UserContext";
+import { Country, State, City } from "country-state-city";
 
 function SignUp() {
   const passwordRegex = /^[a-zA-Z0-9!@#$%^&*]{6,16}$/;
   const { api } = useContext(UserContext);
-
   const nav = useNavigate();
+
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -22,6 +23,8 @@ function SignUp() {
 
   const [errors, setErrors] = useState({});
   const [otpSent, setOtpSent] = useState(false);
+  const [stateApi, setStateApi] = useState(State.getStatesOfCountry("IN"));
+  const [cityApi, setCityApi] = useState([]);
 
   const handleChange = (e) => {
     setFormData({
@@ -98,6 +101,25 @@ function SignUp() {
     }
   };
 
+  const handleStateChange = (e) => {
+    const selectedState = stateApi.find(
+      (state) => state.isoCode === e.target.value
+    );
+    setFormData({
+      ...formData,
+      state: selectedState.name,
+      city: "", // reset city when state changes
+    });
+    setCityApi(City.getCitiesOfState("IN", selectedState.isoCode));
+  };
+
+  const handleCityChange = (e) => {
+    setFormData({
+      ...formData,
+      city: e.target.value,
+    });
+  };
+
   return (
     <>
       <div className="max-w-2xl mx-auto mt-10 p-4">
@@ -167,7 +189,7 @@ function SignUp() {
 
           {/* Address */}
           <div>
-            <label className="block text-gray-700" htmlFor="address1">
+            <label className="block text-gray-700" htmlFor="address">
               Address
             </label>
             <input
@@ -184,35 +206,50 @@ function SignUp() {
             {errors.address && (
               <p className="text-red-500 text-sm">{errors.address}</p>
             )}
-            <div className="flex flex-col mt-8 md:flex-row md:space-x-4 space-y-4 md:space-y-0">
-              <input
-                id="city"
-                name="city"
-                type="text"
-                placeholder="City"
-                value={formData.city}
-                onChange={handleChange}
-                className={`w-full p-2 border focus:outline-none ${
-                  errors.city ? "border-red-500" : "border-gray-300"
-                } rounded`}
-              />
-              {errors.city && (
-                <p className="text-red-500 text-sm">{errors.city}</p>
-              )}
-              <input
-                id="state"
-                name="state"
-                type="text"
-                placeholder="State / Province"
-                value={formData.state}
-                onChange={handleChange}
-                className={`w-full p-2 border focus:outline-none ${
-                  errors.state ? "border-red-500" : "border-gray-300"
-                } rounded`}
-              />
-              {errors.state && (
-                <p className="text-red-500 text-sm">{errors.state}</p>
-              )}
+           <div className="flex flex-col mt-8 md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+              <div className="w-full">
+                <select
+                  id="state"
+                  name="state"
+                  placeholder="State / Province"
+                  onChange={handleStateChange}
+                  className={`w-full p-2 border focus:outline-none ${
+                    errors.state ? "border-red-500" : "border-gray-300"
+                  } rounded`}
+                >
+                  <option value="">State</option>
+                  {stateApi.map((v, key) => (
+                    <option key={key} value={v.isoCode}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.state && (
+                  <p className="text-red-500 text-sm">{errors.state}</p>
+                )}
+              </div>
+              <div className="w-full">
+                <select
+                  id="city"
+                  name="city"
+                  placeholder="City"
+                  value={formData.city}
+                  onChange={handleCityChange}
+                  className={`w-full p-2 border focus:outline-none ${
+                    errors.city ? "border-red-500" : "border-gray-300"
+                  } rounded`}
+                >
+                  <option value="">City</option>
+                  {cityApi.map((v, key) => (
+                    <option key={key} value={v.name}>
+                      {v.name}
+                    </option>
+                  ))}
+                </select>
+                {errors.city && (
+                  <p className="text-red-500 text-sm">{errors.city}</p>
+                )}
+              </div>
             </div>
           </div>
           <div className="mb-4">
@@ -230,6 +267,7 @@ function SignUp() {
               <option value="teacher">Teacher</option>
             </select>
           </div>
+
           {/* Password */}
           <div>
             <label className="block text-gray-700" htmlFor="password">
@@ -239,6 +277,7 @@ function SignUp() {
               id="password"
               name="password"
               type="password"
+              placeholder="Password"
               value={formData.password}
               onChange={handleChange}
               className={`w-full p-2 border focus:outline-none ${
@@ -249,6 +288,7 @@ function SignUp() {
               <p className="text-red-500 text-sm">{errors.password}</p>
             )}
           </div>
+
           {/* Confirm Password */}
           <div>
             <label className="block text-gray-700" htmlFor="confirmPassword">
@@ -258,6 +298,8 @@ function SignUp() {
               id="confirmPassword"
               name="confirmPassword"
               type="password"
+              placeholder="Confirm Password"
+              value={formData.confirmPassword}
               onChange={handleChange}
               className={`w-full p-2 border focus:outline-none ${
                 errors.confirmPassword ? "border-red-500" : "border-gray-300"
@@ -267,53 +309,56 @@ function SignUp() {
               <p className="text-red-500 text-sm">{errors.confirmPassword}</p>
             )}
           </div>
-          {/* Submit Button */}
-          <div className="mb-4">
-            {!otpSent && (
+
+          {/* OTP */}
+          {otpSent && (
+            <div>
+              <label className="block text-gray-700" htmlFor="otp">
+                OTP
+              </label>
+              <input
+                id="otp"
+                name="otp"
+                type="text"
+                value={formData.otp}
+                onChange={handleChange}
+                className={`w-full p-2 border focus:outline-none ${
+                  errors.otp ? "border-red-500" : "border-gray-300"
+                } rounded`}
+              />
+              {errors.otp && (
+                <p className="text-red-500 text-sm">{errors.otp}</p>
+              )}
+            </div>
+          )}
+
+          {/* Buttons */}
+          <div className="w-full justify-between items-center">
+            {!otpSent ? (
               <button
                 type="button"
+                className="bg-blue-500 w-full text-white p-2 rounded hover:bg-blue-600"
                 onClick={handleGenerateOtp}
-                className="w-full bg-blue-500 text-white p-2 rounded"
               >
                 Generate OTP
               </button>
-            )}
-
-            {otpSent && (
-              <div className="mt-4">
-                <label className="block text-gray-700">OTP</label>
-                <input
-                  type="text"
-                  name="otp"
-                  value={formData.otp}
-                  onChange={handleChange}
-                  className={`w-full p-2 border focus:outline-none ${
-                    errors.otp ? "border-red-500" : "border-gray-300"
-                  } rounded`}
-                />
-                {errors.otp && (
-                  <p className="text-red-500 text-sm">{errors.otp}</p>
-                )}
-              </div>
-            )}
-          </div>
-          <div className="mb-4">
-            {otpSent && (
+            ) : (
               <button
                 type="submit"
-                className="w-full bg-green-500 text-white p-2 rounded"
+                className="bg-green-500 w-full text-white p-2 rounded hover:bg-green-600"
               >
                 Register
               </button>
             )}
+          
           </div>
+          <p className="mt-6 text-center">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-600">
+                Log In
+              </Link>
+            </p>
         </form>
-        <p className="mt-6 text-center">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600">
-            Login
-          </Link>
-        </p>
       </div>
     </>
   );
